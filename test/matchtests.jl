@@ -2,20 +2,21 @@ using Match
 using Base.Test
 using Compat
 
-require("testtypes.jl")
+#require("testtypes.jl")
+include("testtypes.jl")
 
 import Base: show
 
 # Type matching
 test1(item) = @match item begin
     n::Int               => "Integers are awesome!"
-    str::String          => "Strings are the best"
-    m::Dict{Int, String} => "Ints for Strings?"
+    str::AbstractString  => "Strings are the best"
+    m::Dict{Int, AbstractString} => "Ints for Strings?"
     d::Dict              => "A Dict! Looking up a word?"
     _                    => "Something unexpected"
 end
 
-d = @compat Dict{Int,String}(1=>"a",2=>"b")
+d = @compat Dict{Int,AbstractString}(1=>"a",2=>"b")
 
 @test test1(66)     == "Integers are awesome!"
 @test test1("abc")  == "Strings are the best"
@@ -28,14 +29,14 @@ d = @compat Dict{Int,String}(1=>"a",2=>"b")
 # inspired by http://thecodegeneral.wordpress.com/2012/03/25/switch-statements-on-steroids-scala-pattern-matching/
 
 # type Address
-#     street::String
-#     city::String
-#     zip::String
+#     street::AbstractString
+#     city::AbstractString
+#     zip::AbstractString
 # end
 
 # type Person
-#     firstname::String
-#     lastname::String
+#     firstname::AbstractString
+#     lastname::AbstractString
 #     address::Address
 # end
 
@@ -62,11 +63,11 @@ end
 # abstract Term
 
 # immutable Var <: Term
-#     name::String
+#     name::AbstractString
 # end
 
 # immutable Fun <: Term
-#     arg::String
+#     arg::AbstractString
 #     body::Term
 # end
 
@@ -127,7 +128,7 @@ myisodd(x::Int) = @match(x, i => i%2==1)
 
 # Alternatives, Guards
 
-function parse_arg(arg::String, value::Any=nothing)
+function parse_arg(arg::AbstractString, value::Any=nothing)
    @match (arg, value) begin
       ("-l",              lang),   if lang != nothing end => "Language set to $lang"
       ("-o" || "--optim", n::Int),      if 0 < n <= 5 end => "Optimization level set to $n"
